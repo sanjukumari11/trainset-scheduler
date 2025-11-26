@@ -8,6 +8,8 @@ import { WhatIfSimulator } from "@/components/dashboard/WhatIfSimulator";
 import { FilterPanel } from "@/components/dashboard/FilterPanel";
 import { mockTrainsets, mockConflictAlerts } from "@/data/mockTrainsets";
 import { Trainset } from "@/types/trainset";
+import { generateInductionListPDF } from "@/lib/pdfExport";
+import { toast } from "sonner";
 
 const Index = () => {
   const [selectedTrainset, setSelectedTrainset] = useState<Trainset | null>(null);
@@ -19,6 +21,19 @@ const Index = () => {
   const handleTrainsetClick = (trainset: Trainset) => {
     setSelectedTrainset(trainset);
     setDialogOpen(true);
+  };
+
+  const handleExportPDF = async () => {
+    try {
+      toast.loading("Generating PDF...");
+      await generateInductionListPDF(filteredTrainsets, mockConflictAlerts, new Date());
+      toast.dismiss();
+      toast.success("PDF exported successfully!");
+    } catch (error) {
+      toast.dismiss();
+      toast.error("Failed to export PDF");
+      console.error("PDF export error:", error);
+    }
   };
 
   const filteredTrainsets = mockTrainsets.filter((trainset) => {
@@ -34,7 +49,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <DashboardHeader />
+      <DashboardHeader onExport={handleExportPDF} />
       
       <main className="container mx-auto px-6 py-8">
         <div className="space-y-6">

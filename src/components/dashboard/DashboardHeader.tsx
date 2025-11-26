@@ -1,18 +1,37 @@
-import { Train, Calendar, Clock } from "lucide-react";
+import { Train, Calendar, Clock, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
 
-export function DashboardHeader() {
-  const currentDate = new Date().toLocaleDateString("en-IN", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-  
-  const currentTime = new Date().toLocaleTimeString("en-IN", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+interface DashboardHeaderProps {
+  onExport?: () => void;
+}
+
+export function DashboardHeader({ onExport }: DashboardHeaderProps) {
+  const [currentDate, setCurrentDate] = useState("");
+  const [currentTime, setCurrentTime] = useState("");
+  useEffect(() => {
+    const updateDateTime = () => {
+      const now = new Date();
+      setCurrentDate(
+        now.toLocaleDateString("en-IN", {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })
+      );
+      setCurrentTime(
+        now.toLocaleTimeString("en-IN", {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      );
+    };
+
+    updateDateTime();
+    const interval = setInterval(updateDateTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <header className="border-b border-border bg-card">
@@ -36,8 +55,9 @@ export function DashboardHeader() {
               <Clock className="h-4 w-4 text-muted-foreground" />
               <span className="font-medium text-foreground">{currentTime}</span>
             </div>
-            <Button variant="default" size="sm">
-              Generate Service List
+            <Button variant="default" size="sm" onClick={onExport} className="gap-2">
+              <Download className="h-4 w-4" />
+              Export PDF
             </Button>
           </div>
         </div>
