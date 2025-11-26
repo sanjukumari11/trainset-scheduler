@@ -4,6 +4,7 @@ import { StatsOverview } from "@/components/dashboard/StatsOverview";
 import { ConflictAlerts } from "@/components/dashboard/ConflictAlerts";
 import { TrainsetCard } from "@/components/dashboard/TrainsetCard";
 import { TrainsetDetailsDialog } from "@/components/dashboard/TrainsetDetailsDialog";
+import { DataImportDialog } from "@/components/dashboard/DataImportDialog";
 import { WhatIfSimulator } from "@/components/dashboard/WhatIfSimulator";
 import { FilterPanel } from "@/components/dashboard/FilterPanel";
 import { mockTrainsets, mockConflictAlerts } from "@/data/mockTrainsets";
@@ -14,6 +15,7 @@ import { toast } from "sonner";
 const Index = () => {
   const [selectedTrainset, setSelectedTrainset] = useState<Trainset | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [brandingFilter, setBrandingFilter] = useState("all");
@@ -49,7 +51,10 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <DashboardHeader onExport={handleExportPDF} />
+      <DashboardHeader 
+        onExport={handleExportPDF} 
+        onImport={() => setImportDialogOpen(true)}
+      />
       
       <main className="container mx-auto px-6 py-8">
         <div className="space-y-6">
@@ -96,6 +101,11 @@ const Index = () => {
         trainset={selectedTrainset}
         open={dialogOpen}
         onOpenChange={setDialogOpen}
+      />
+
+      <DataImportDialog
+        open={importDialogOpen}
+        onOpenChange={setImportDialogOpen}
       />
     </div>
   );
